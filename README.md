@@ -20,6 +20,7 @@ Rule 3 </br>
 1. Open folder in Intelij and run file
 2. Select a text file inside the folder or create a new one for yourself
 3. Call the solve Nonogram to solve the nonogram and run the display method
+   - For more information on how to run program, either run Nonogram.java or (future) take a look in the javadoc folder
 
 ## Images of program running
 <table style="border: none">
