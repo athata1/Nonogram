@@ -56,8 +56,8 @@ public class Nonogram {
 
         NonogramSolver n = new NonogramSolver(rowRules,colRules);
         long start = System.currentTimeMillis();
+        n.displayNonogram(10);
         n.solveNonogram();
-        n.displayNonogram(5);
         n.printNonogram();
         System.out.println(1.0*(System.currentTimeMillis() - start)/1000 + " seconds");
     }

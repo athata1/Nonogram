@@ -2,17 +2,16 @@ package Nonogram;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 
-public class DisplayNonogram extends JPanel implements MouseListener {
+public class DisplayNonogram extends JPanel implements MouseListener, ActionListener {
     private final String[][] board;
     private final int BOXSIZE;
     private final int[][] rowRules;
     private final int[][] colRules;
+    Timer tm = new Timer(10, this);
     public DisplayNonogram(String[][] board,int size, int[][] rowRules, int[][] colRules)
     {
         addMouseListener(this);
@@ -122,6 +121,13 @@ public class DisplayNonogram extends JPanel implements MouseListener {
         {
             g.drawLine(c*BOXSIZE,0,c*BOXSIZE,board.length*BOXSIZE);
         }
+        tm.start();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        tm.stop();
+        repaint();
     }
 
     public void centerText(int x, int y, Font font, int width, int height, String s, Graphics g)

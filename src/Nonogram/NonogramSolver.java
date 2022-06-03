@@ -10,9 +10,12 @@ public class NonogramSolver {
     private final int[][] rowRules;
     private final int[][] colRules;
     String[][] board;
+    int numThreads;
 
     public NonogramSolver(int[][] rowRules, int[][] colRules)
     {
+
+        this.numThreads = 5;
         this.rowRules = rowRules;
         this.colRules = colRules;
         board = new String[rowRules.length][colRules.length];
@@ -79,7 +82,6 @@ public class NonogramSolver {
     {
         int r = 0;
         int c = 0;
-        int numThreads = 5;
         while (r + numThreads-1 < board.length && c + numThreads-1 < board[0].length)
         {
             long time = System.currentTimeMillis();
@@ -270,6 +272,11 @@ public class NonogramSolver {
             }
         }
     }
+
+    public void setNumThread(int n) {
+        numThreads = n;
+    }
+
     public void runRule2()
     {
         String[][] temp1 = new String[board.length][board[0].length];
