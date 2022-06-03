@@ -21,4 +21,11 @@ Rule 3 </br>
 2. Select a text file inside the folder or create a new one for yourself
 3. Call the solve Nonogram to solve the nonogram and run the display method
 
-## Images of program
+## Images of program running
+<table style="border: none">
+  <tr>
+    <td valign="top"><img src="Images/bunny.png" width="250" height="250" /></td>
+    <td valign="top"><img src="Images/soup.png" width=250 height=250 /></td>
+    <td valign="top"><img src="Images/owl.png" width=250 height=250 /></td>
+   </tr>
+</table>
