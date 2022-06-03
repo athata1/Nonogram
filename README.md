@@ -24,8 +24,8 @@ Rule 3 </br>
 ## Images of program running
 <table style="border: none">
   <tr>
-    <td valign="top"><img src="Images/bunny.png" width="250" height="250" /></td>
-    <td valign="top"><img src="Images/soup.png" width=250 height=250 /></td>
-    <td valign="top"><img src="Images/owl.png" width=250 height=250 /></td>
+    <td valign="top"><img src="Images/bunny.png" width="275" height="275" /></td>
+    <td valign="top"><img src="Images/soup.png" width=275 height=275 /></td>
+    <td valign="top"><img src="Images/owl.png" width=275 height=275 /></td>
    </tr>
 </table>
