@@ -11,10 +11,11 @@ public class NonogramSolver {
     private final int[][] colRules;
     String[][] board;
     int numThreads;
-
+    boolean solving;
+   ArrayList<ArrayList<int[]>>[][] lineList = new ArrayList[2][];
     public NonogramSolver(int[][] rowRules, int[][] colRules)
     {
-
+        solving = false;
         this.numThreads = 5;
         this.rowRules = rowRules;
         this.colRules = colRules;
@@ -23,7 +24,53 @@ public class NonogramSolver {
         {
             Arrays.fill(board[r], "");
         }
+        lineList[0] = new ArrayList[rowRules.length];
+        lineList[1] = new ArrayList[colRules.length];
+        getLineList();
     }
+
+    public void getLineList() {
+        for (int k = 0; k < rowRules.length; k++) {
+            int sum = 0;
+            for (int n: rowRules[k]) {
+                sum += n + 1;
+            }
+            sum--;
+            int leftShift = 0;
+            ArrayList<ArrayList<int[]>> list = new ArrayList<>();
+            for (int n: rowRules[k]) {
+                ArrayList<int[]> curr = new ArrayList<>();
+                for (int i = leftShift; i < rowRules.length - sum + 1; i++) {
+                    curr.add(new int[]{i,i + n - 1});
+                }
+                list.add(curr);
+                sum -= n + 1;
+                leftShift += n + 1;
+            }
+            lineList[0][k] = list;
+        }
+
+        for (int k = 0; k < colRules.length; k++) {
+            int sum = 0;
+            for (int n: colRules[k]) {
+                sum += n + 1;
+            }
+            sum--;
+            int leftShift = 0;
+            ArrayList<ArrayList<int[]>> list = new ArrayList<>();
+            for (int n: colRules[k]) {
+                ArrayList<int[]> curr = new ArrayList<>();
+                for (int i = leftShift; i < colRules.length - sum + 1; i++) {
+                    curr.add(new int[]{i,i + n - 1});
+                }
+                list.add(curr);
+                sum -= n + 1;
+                leftShift += n + 1;
+            }
+            lineList[1][k] = list;
+        }
+    }
+
     public void displayNonogram(int size)
     {
         SwingUtilities.invokeLater(new Runnable() {
@@ -35,7 +82,7 @@ public class NonogramSolver {
     }
     public void createGUI(int size)
     {
-        DisplayNonogram t = new DisplayNonogram(board,size,rowRules,colRules);
+        DisplayNonogram t = new DisplayNonogram(board,size,rowRules,colRules, this);
         JFrame jf = new JFrame();
         jf.setTitle("Nonogram");
         jf.setSize(1000,1000);
@@ -63,10 +110,11 @@ public class NonogramSolver {
     //Solves the Nonogram given the rules provided in the constructor
     public String[][] solveNonogram()
     {
+        solving = true;
         String[][] prev = null;
-        runThroughFirstBoard();
         while (true)
         {
+            determineNonogram("");
             determineNonogram();
             if (isBoardFull())
                 break;
@@ -75,9 +123,48 @@ public class NonogramSolver {
             prev = copyOfBoard();
             System.out.println("Went through entire board");
         }
+        solving = false;
         return board;
     }
 
+    public boolean determineNonogram(String s) {
+
+        //Do rows
+        boolean running = false;
+        for (int r = 0; r < rowRules.length; r++) {
+            String[] currentRow = board[r];
+            int[] currentRule = rowRules[r];
+            ArrayList<ArrayList<int[]>> currentLines = lineList[0][r];
+            NewNonogramThread n = new NewNonogramThread(currentRow, currentRule, currentLines);
+            Thread th = new Thread(n);
+            th.start();
+
+            try {
+                th.join();
+            } catch (Exception e) {};
+
+            for (int i = 0; i < currentRow.length; i++) {
+                board[r][i] = n.currentRow[i];
+            }
+            running |= n.running;
+        }
+        for (int c = 0; c < colRules.length; c++) {
+            String[] currentRow = generateColumnArray(c);
+            int[] currentRule = colRules[c];
+            ArrayList<ArrayList<int[]>> currentLines = lineList[1][c];
+            NewNonogramThread n = new NewNonogramThread(currentRow, currentRule, currentLines);
+            Thread th = new Thread(n);
+            th.start();
+            try {
+                th.join();
+            } catch (Exception e) {}
+            running |= n.running;
+            for (int r = 0; r < rowRules.length; r++) {
+                board[r][c] = currentRow[r];
+            }
+        }
+        return running;
+    }
     public void determineNonogram()
     {
         int r = 0;
@@ -135,11 +222,19 @@ public class NonogramSolver {
             for (int i = 0; i < numThreads; i++) {
                 double[] probabilities = nThreads.get(i).getProbabilities();
                 for (int j = 0; j < probabilities.length; j++) {
+                    if (!board[r][j].equals(""))
+                        continue;
                     if (probabilities[j] == 1.0) {
                         board[r][j] = "S";
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {}
                     }
                     if (probabilities[j] == 0.0) {
                         board[r][j] = "X";
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {}
                     }
                 }
                 r++;
@@ -149,11 +244,20 @@ public class NonogramSolver {
             for (int i = 0; i < numThreads; i++) {
                 probabilities = nThreads.get(i+numThreads).getProbabilities();
                 for (int j = 0; j < board.length; j++) {
+                    if (!board[j][c].equals(""))
+                        continue;
                     if (probabilities[j] == 1) {
                         board[j][c] = "S";
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {}
                     }
                     if (probabilities[j] == 0)
+
                         board[j][c] = "X";
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {}
                 }
                 c++;
             }
@@ -162,17 +266,24 @@ public class NonogramSolver {
 
         while (r < board.length)
         {
-            System.out.println("Here");
             double[] probabilities = findProbabilityOfOccurrence(board[r],rowRules[r]);
             for (int j = 0; j < probabilities.length; j++)
             {
+                if (!board[r][j].equals(""))
+                    continue;
                 if (probabilities[j] == 1.0)
                 {
                     board[r][j] = "S";
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {}
                 }
                 if (probabilities[j] == 0.0)
                 {
                     board[r][j] = "X";
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {}
                 }
             }
             r++;
@@ -180,17 +291,24 @@ public class NonogramSolver {
 
         while (c < board[0].length)
         {
-            System.out.println("Here");
             String[] colArray = generateColumnArray(c);
             double[] probabilities = findProbabilityOfOccurrence(colArray,colRules[c]);
             for (int i = 0; i < board.length; i++)
             {
+                if (!board[i][c].equals(""))
+                    continue;
                 if (probabilities[i] == 1)
                 {
                     board[i][c] = "S";
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {}
                 }
                 if (probabilities[i] == 0)
                     board[i][c] = "X";
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {}
             }
             c++;
         }

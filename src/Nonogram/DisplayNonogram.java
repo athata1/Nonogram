@@ -12,8 +12,10 @@ public class DisplayNonogram extends JPanel implements MouseListener, ActionList
     private final int[][] rowRules;
     private final int[][] colRules;
     Timer tm = new Timer(10, this);
-    public DisplayNonogram(String[][] board,int size, int[][] rowRules, int[][] colRules)
+    NonogramSolver d;
+    public DisplayNonogram(String[][] board,int size, int[][] rowRules, int[][] colRules, NonogramSolver d)
     {
+        this.d = d;
         addMouseListener(this);
         setPreferredSize( new Dimension( 700, 700));
         this.board = board;
@@ -150,6 +152,8 @@ public class DisplayNonogram extends JPanel implements MouseListener, ActionList
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if (d.solving)
+            return;
         int r = (e.getY() - BOXSIZE*20/3)/BOXSIZE;
         int c = (e.getX() - BOXSIZE*20/3)/BOXSIZE;
         if (r <= board.length - 1 && c <= board[0].length - 1)
