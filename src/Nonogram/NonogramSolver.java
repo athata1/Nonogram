@@ -12,7 +12,8 @@ public class NonogramSolver {
     String[][] board;
     int numThreads;
     boolean solving;
-   ArrayList<ArrayList<int[]>>[][] lineList = new ArrayList[2][];
+    private boolean isSlowSpeed = false;
+    ArrayList<ArrayList<int[]>>[][] lineList = new ArrayList[2][];
     public NonogramSolver(int[][] rowRules, int[][] colRules)
     {
         solving = false;
@@ -27,6 +28,10 @@ public class NonogramSolver {
         lineList[0] = new ArrayList[rowRules.length];
         lineList[1] = new ArrayList[colRules.length];
         getLineList();
+    }
+
+    public void setSlowSpeed(boolean b) {
+        this.isSlowSpeed = b;
     }
 
     public void getLineList() {
@@ -112,9 +117,9 @@ public class NonogramSolver {
     {
         solving = true;
         String[][] prev = null;
+        runThroughFirstBoard();
         while (true)
         {
-            determineNonogram("");
             determineNonogram();
             if (isBoardFull())
                 break;
@@ -226,15 +231,21 @@ public class NonogramSolver {
                         continue;
                     if (probabilities[j] == 1.0) {
                         board[r][j] = "S";
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {}
+                        if (isSlowSpeed) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                            }
+                        }
                     }
                     if (probabilities[j] == 0.0) {
                         board[r][j] = "X";
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {}
+                        if (isSlowSpeed) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                            }
+                        }
                     }
                 }
                 r++;
@@ -248,16 +259,21 @@ public class NonogramSolver {
                         continue;
                     if (probabilities[j] == 1) {
                         board[j][c] = "S";
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {}
+                        if (isSlowSpeed) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                            }
+                        }
                     }
                     if (probabilities[j] == 0)
-
                         board[j][c] = "X";
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {}
+                    if (isSlowSpeed) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                        }
+                    }
                 }
                 c++;
             }
@@ -274,16 +290,22 @@ public class NonogramSolver {
                 if (probabilities[j] == 1.0)
                 {
                     board[r][j] = "S";
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {}
+                    if (isSlowSpeed) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                        }
+                    }
                 }
                 if (probabilities[j] == 0.0)
                 {
                     board[r][j] = "X";
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {}
+                    if (isSlowSpeed) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                        }
+                    }
                 }
             }
             r++;
@@ -300,15 +322,21 @@ public class NonogramSolver {
                 if (probabilities[i] == 1)
                 {
                     board[i][c] = "S";
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {}
+                    if (isSlowSpeed) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                        }
+                    }
                 }
                 if (probabilities[i] == 0)
                     board[i][c] = "X";
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {}
+                    if (isSlowSpeed) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                        }
+                    }
             }
             c++;
         }
