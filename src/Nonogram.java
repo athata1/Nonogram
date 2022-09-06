@@ -55,6 +55,7 @@ public class Nonogram {
         }
 
         NonogramSolver n = new NonogramSolver(rowRules,colRules);
+        n.setSlowSpeed(true);
         long start = System.currentTimeMillis();
         n.displayNonogram(10);
         n.solveNonogram();

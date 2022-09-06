@@ -132,44 +132,6 @@ public class NonogramSolver {
         return board;
     }
 
-    public boolean determineNonogram(String s) {
-
-        //Do rows
-        boolean running = false;
-        for (int r = 0; r < rowRules.length; r++) {
-            String[] currentRow = board[r];
-            int[] currentRule = rowRules[r];
-            ArrayList<ArrayList<int[]>> currentLines = lineList[0][r];
-            NewNonogramThread n = new NewNonogramThread(currentRow, currentRule, currentLines);
-            Thread th = new Thread(n);
-            th.start();
-
-            try {
-                th.join();
-            } catch (Exception e) {};
-
-            for (int i = 0; i < currentRow.length; i++) {
-                board[r][i] = n.currentRow[i];
-            }
-            running |= n.running;
-        }
-        for (int c = 0; c < colRules.length; c++) {
-            String[] currentRow = generateColumnArray(c);
-            int[] currentRule = colRules[c];
-            ArrayList<ArrayList<int[]>> currentLines = lineList[1][c];
-            NewNonogramThread n = new NewNonogramThread(currentRow, currentRule, currentLines);
-            Thread th = new Thread(n);
-            th.start();
-            try {
-                th.join();
-            } catch (Exception e) {}
-            running |= n.running;
-            for (int r = 0; r < rowRules.length; r++) {
-                board[r][c] = currentRow[r];
-            }
-        }
-        return running;
-    }
     public void determineNonogram()
     {
         int r = 0;
