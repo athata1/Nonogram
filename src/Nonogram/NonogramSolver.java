@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class NonogramSolver {
 
@@ -14,6 +15,59 @@ public class NonogramSolver {
     boolean solving;
     private boolean isSlowSpeed = false;
     ArrayList<ArrayList<int[]>>[][] lineList = new ArrayList[2][];
+
+    public NonogramSolver(Scanner scan) {
+
+        //Create row Rules
+        int numRows = scan.nextInt();
+        rowRules = new int[numRows][];
+        scan.nextLine();
+        int pointer = 0;
+        while (scan.hasNextLine())
+        {
+            String s = scan.nextLine();
+            if (s.equals(""))
+                break;
+            String[] rulesString = s.split(",");
+            int[] rulesInt = new int[rulesString.length];
+            for (int i = 0; i < rulesInt.length; i++)
+            {
+                rulesInt[i] = Integer.parseInt(rulesString[i]);
+            }
+            rowRules[pointer++] = rulesInt;
+        }
+
+        //Create column roles
+        int numCols = scan.nextInt();
+        colRules = new int[numCols][];
+        scan.nextLine();
+        pointer = 0;
+        while (scan.hasNextLine())
+        {
+            String s = scan.nextLine();
+            if (s.equals(""))
+                break;
+            String[] rulesString = s.split(",");
+            int[] rulesInt = new int[rulesString.length];
+            for (int i = 0; i < rulesInt.length; i++)
+            {
+                rulesInt[i] = Integer.parseInt(rulesString[i]);
+            }
+            colRules[pointer++] = rulesInt;
+        }
+
+        solving = false;
+        this.numThreads = 5;
+        board = new String[rowRules.length][colRules.length];
+        for (int r = 0; r < board.length; r++)
+        {
+            Arrays.fill(board[r], "");
+        }
+        lineList[0] = new ArrayList[rowRules.length];
+        lineList[1] = new ArrayList[colRules.length];
+        getLineList();
+    }
+
     public NonogramSolver(int[][] rowRules, int[][] colRules)
     {
         solving = false;
@@ -112,6 +166,7 @@ public class NonogramSolver {
             System.out.println();
         }
     }
+
     //Solves the Nonogram given the rules provided in the constructor
     public String[][] solveNonogram()
     {

@@ -18,43 +18,7 @@ public class Nonogram {
             }
         } while (scan == null);
 
-        int numRows = scan.nextInt();
-        int[][] rowRules = new int[numRows][];
-        scan.nextLine();
-        int pointer = 0;
-        while (scan.hasNextLine())
-        {
-            String s = scan.nextLine();
-            if (s.equals(""))
-                break;
-            String[] rulesString = s.split(",");
-            int[] rulesInt = new int[rulesString.length];
-            for (int i = 0; i < rulesInt.length; i++)
-            {
-                rulesInt[i] = Integer.parseInt(rulesString[i]);
-            }
-            rowRules[pointer++] = rulesInt;
-        }
-
-        int numCols = scan.nextInt();
-        int[][] colRules = new int[numCols][];
-        scan.nextLine();
-        pointer = 0;
-        while (scan.hasNextLine())
-        {
-            String s = scan.nextLine();
-            if (s.equals(""))
-                break;
-            String[] rulesString = s.split(",");
-            int[] rulesInt = new int[rulesString.length];
-            for (int i = 0; i < rulesInt.length; i++)
-            {
-                rulesInt[i] = Integer.parseInt(rulesString[i]);
-            }
-            colRules[pointer++] = rulesInt;
-        }
-
-        NonogramSolver n = new NonogramSolver(rowRules,colRules);
+        NonogramSolver n = new NonogramSolver(scan);
         n.setSlowSpeed(false);
         long start = System.currentTimeMillis();
         n.displayNonogram(10);
